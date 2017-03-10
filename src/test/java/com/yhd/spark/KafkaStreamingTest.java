@@ -28,7 +28,7 @@ import org.apache.beam.runners.spark.SparkContextOptions;
 import org.apache.beam.runners.spark.SparkPipelineOptions;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.*;
-import org.apache.beam.sdk.io.kafka.KafkaIO;
+import org.apache.beam.sdk.io.kafka8.Kafka8IO;
 import org.apache.beam.sdk.transforms.Distinct;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.ParDo;
@@ -106,16 +106,16 @@ public class KafkaStreamingTest {
         //------- test: read and dedup.
         Pipeline p = Pipeline.create(options);
 
-        Map<String, Object> consumerProps = ImmutableMap.<String, Object>of(
-                "auto.offset.reset", "earliest"
+        Map<String, String> consumerProps = ImmutableMap.<String, String>of(
+                "auto.offset.reset", "smallest"
         );
 
-        KafkaIO.Read<String, String> read = KafkaIO.<String, String>read()
+        Kafka8IO.Read<String, String> read = Kafka8IO.<String, String>read()
                 .withBootstrapServers(EMBEDDED_KAFKA_CLUSTER.getBrokerList())
                 .withTopics(Arrays.asList(topic1, topic2))
                 .withKeyCoder(StringUtf8Coder.of())
                 .withValueCoder(StringUtf8Coder.of())
-                .updateConsumerProperties(consumerProps);
+                .updateKafkaClusterProperties(consumerProps);
 
         PCollection<String> deduped =
                 p.apply(read.withoutMetadata()).setCoder(
@@ -158,16 +158,16 @@ public class KafkaStreamingTest {
         //------- test: read and format.
         Pipeline p = Pipeline.create(options);
 
-        Map<String, Object> consumerProps = ImmutableMap.<String, Object>of(
-                "auto.offset.reset", "latest"
+        Map<String, String> consumerProps = ImmutableMap.<String, String>of(
+                "auto.offset.reset", "largest"
         );
 
-        KafkaIO.Read<String, String> read = KafkaIO.<String, String>read()
+        Kafka8IO.Read<String, String> read = Kafka8IO.<String, String>read()
                 .withBootstrapServers(EMBEDDED_KAFKA_CLUSTER.getBrokerList())
                 .withTopics(Collections.singletonList(topic))
                 .withKeyCoder(StringUtf8Coder.of())
                 .withValueCoder(NonKryoSerializableStringCoder.of())
-                .updateConsumerProperties(consumerProps);
+                .updateKafkaClusterProperties(consumerProps);
 
         PCollection<String> formatted =
                 p.apply(read.withoutMetadata()).setCoder(
@@ -190,7 +190,7 @@ public class KafkaStreamingTest {
                 kafkaProducer.send(new ProducerRecord<>(topic, en.getKey(), en.getValue()));
             }
             // await send completion.
-            kafkaProducer.flush();
+            //kafkaProducer.flush();
         }
     }
 

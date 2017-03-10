@@ -99,7 +99,7 @@ public class KafkaWriteOnBatchCompleted extends JavaStreamingListener {
               kafkaProducer.send(new ProducerRecord<>(topic, en.getKey(), en.getValue()));
             }
             // await send completion.
-            kafkaProducer.flush();
+          //  kafkaProducer.flush();
           }
         }
   }

@@ -20,6 +20,7 @@ package com.yhd.spark.oozie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -48,7 +49,7 @@ public class OozieAuditLogKafkaDeserializer  {
         }
         if (entity == null) {
             LOG.warn("Event ignored as it can't be correctly parsed, the log is ", logLine);
-            return null;
+            return new HashMap<>();
         }
         Map<String, Object> map = new TreeMap<String, Object>();
         map.put("timestamp", String.valueOf(entity.timestamp));
