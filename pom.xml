@@ -15,7 +15,7 @@
     <spark.version>1.6.3</spark.version>
     <jackson.version>2.4.4</jackson.version>
     <beam.version>0.5.0</beam.version>
-    <scala.version>2.10</scala.version>
+    <scala.version>2.11</scala.version>
     <kafka.version>0.8.2.2</kafka.version>
   </properties>
 
@@ -71,7 +71,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>
-      <artifactId>kafka_2.10</artifactId>
+      <artifactId>kafka_${scala.version}</artifactId>
       <version>${kafka.version}</version>
       <scope>test</scope>
     </dependency>
